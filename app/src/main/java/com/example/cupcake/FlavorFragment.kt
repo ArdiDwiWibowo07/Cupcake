@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.example.cupcake
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.example.cupcake.databinding.FragmentFlavorBinding
+import com.example.cupcake.model.OrderViewModel
+
+/**
+ * [FlavorFragment] mengizinkan  pengguna untuk memilih rasa  roti untuk dipesan
+ */
+class FlavorFragment : Fragment() {
+
+    // Binding objek instance yang sesuai dengan layout fragment_flavor.xml
+    // Properti ini bukan nol antara callback siklus hidup onCreateView() dan onDestroyView(),
+    // ketika hierarki tampilan dilampirkan ke fragmen.
+    private var binding: FragmentFlavorBinding? = null
+
+    // Use the 'by activityViewModels()' Kotlin property delegate from the fragment-ktx artifact
+    private val sharedViewModel: OrderViewModel by activityViewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val fragmentBinding = FragmentFlavorBinding.inflate(inflater, container, false)
+        binding = fragmentBinding
+        return fragmentBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding?.apply {
+            // Menentukan fragment sebagai lifecyleOwner
+            lifecycleOwner = viewLifecycleOwner
+
+            // Tetapkan view model  ke property dalam class view binding
+            viewModel = sharedViewModel
+
+            // Tetapkan fragmen
+            flavorFragment = this@FlavorFragment
+        }
+    }
+
+    /**
+     * Arahkan ke screen selanjutnya untuk memilih tanggal.
+     */
+    fun goToNextScreen() {
+        findNavController().navigate(R.id.action_flavorFragment_to_pickupFragment)
+    }
+
+    /**
+     * Batalkan order dan memulai kembali.
+     */
+    fun cancelOrder() {
+        // Mengulangi order dalam view model
+        sharedViewModel.resetOrder()
+
+
+        // Arahkan navigasi kembali ke [StartFragment] untuk memulai kembali
+        findNavController().navigate(R.id.action_flavorFragment_to_startFragment)
+    }
+
+    /**
+     * Metode siklus hidup fragmen pada saat ini dipanggil pada hierarki tampilan terkait dengan fragmen
+     * siklus sedang dihapus. Akibatnya, bersihkan objek yang mengikat.
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+}

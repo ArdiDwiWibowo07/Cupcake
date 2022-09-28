@@ -35,7 +35,7 @@ class FlavorFragment : Fragment() {
     // ketika hierarki tampilan dilampirkan ke fragmen.
     private var binding: FragmentFlavorBinding? = null
 
-    // Use the 'by activityViewModels()' Kotlin property delegate from the fragment-ktx artifact
+    // Gunakan delegasi properti Kotlin 'by activityViewModels()' dari artefak fragmen-ktx
     private val sharedViewModel: OrderViewModel by activityViewModels()
 
     override fun onCreateView(
